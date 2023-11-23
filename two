@@ -1,0 +1,29 @@
+from airflow import DAG
+from airflow.operators.python_operator import PythonOperator
+from airflow.decorators import task
+
+default_args = {
+    'owner': 'airflow',
+    'start_date': airflow.utils.dates.days_ago(2),
+    'depends_on_past': False
+}
+
+dag = DAG(
+    dag_id='example_dynamic_task_mapping',
+    default_args=default_args,
+    description='Example of dynamic task mapping',
+    schedule_interval=None
+)
+
+@task
+def generate_data():
+    return [1, 2, 3, 4, 5]
+
+@task
+def process_data(data):
+    print(f"Processing data: {data}")
+
+generate_data_task = generate_data()
+
+for item in generate_data_task:
+    process_data_task(item)
